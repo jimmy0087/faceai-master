@@ -5,7 +5,7 @@ import cv2
 def main():
     execution_path = os.getcwd()
     model_path = ['MTCNN_model/PNet_landmark/PNet-30', 'MTCNN_model/RNet_landmark/RNet-22',
-              'MTCNN_model/ONet_landmark/ONet-22']
+                  'MTCNN_model/ONet_landmark/ONet-22']
     input_path = os.path.join(execution_path, "image.jpg")
     output_path = os.path.join(execution_path, "imagenew.jpg")
     # image_arr = cv2.imread(input_path)

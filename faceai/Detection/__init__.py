@@ -218,6 +218,7 @@ class FacesDetection:
                         draw_caption(detected_copy, detection_details, caption)
                     each_object_details = {}
                     #each_object_details["name"] = self.numbers_to_names[label]
+                    each_object_details["detection_details"] = detection_details
                     each_object_details["percentage_probability"] = str(score * 100)
                     output_objects_array.append(each_object_details)
 
