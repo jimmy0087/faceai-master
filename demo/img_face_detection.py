@@ -15,7 +15,8 @@ def main():
     facedetector.setModelPath(model_path)
     facedetector.loadModel(min_face_size=24)
 
-    dets = facedetector.detectFacesFromImage(input_image=input_path, output_image_path=output_path,input_type="array")
+    img,dets = facedetector.detectFacesFromImage(input_image=input_path,box_mark=True)
+    cv2.imshow("t",img)
     print('the number of faces: {:0>3d}'.format((len(dets))))
 
 if __name__ == '__main__':

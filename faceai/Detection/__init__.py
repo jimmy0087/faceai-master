@@ -102,59 +102,30 @@ class FacesDetection:
                 self.__modelLoaded = True
 
 
-    def detectFacesFromImage(self, input_image="", output_image_path="", input_type="file", output_type="file", caption = False,extract_detected_objects = False, minimum_percentage_probability = 50):
+    def detectFacesFromImage(self, input_image="",
+                             caption_mark = False,
+                             box_mark=False,
+                             extract_detected_objects = False,
+                             minimum_percentage_probability = 50):
         """
             'detectObjectsFromImage()' function is used to detect faces observable in the given image path:
-                    * input_image , which can be file to path, image numpy array or image file stream
-                    * output_image_path (only if output_type = file) , file path to the output image that will contain the detection boxes and label, if output_type="file"
-                    * input_type (optional) , file path/numpy array/image file stream of the image. Acceptable values are "file", "array" and "stream"
-                    * output_type (optional) , file path/numpy array/image file stream of the image. Acceptable values are "file" and "array"
-                    * caption(default is false), option to output image whether have caption
+                    * input_image , which can be file to path, image numpy array ,the function will recognize the type of the input automatically
+                    * caption_mark , whether the output image are marked with caption
+                    * box_mark , whether the output image are marked with box
                     * extract_detected_objects (optional) , option to save each object detected individually as an image and return an array of the objects' image path.
                     * minimum_percentage_probability (optional, 50 by default) , option to set the minimum percentage probability for nominating a detected object for output.
 
-            The values returned by this function depends on the parameters parsed. The possible values returnable
-            are stated as below
-            - If extract_detected_objects = False or at its default value and output_type = 'file' or
-                at its default value, you must parse in the 'output_image_path' as a string to the path you want
-                the detected image to be saved. Then the function will return:
-                1. an array of dictionaries, with each dictionary corresponding to the objects
-                    detected in the image. Each dictionary contains the following property:
-                    * name
-                    * percentage_probability
-
-            - If extract_detected_objects = False or at its default value and output_type = 'array' ,
-              Then the function will return:
-
+            The values returned by this function as follows:
                 1. a numpy array of the detected image
                 2. an array of dictionaries, with each dictionary corresponding to the objects
                     detected in the image. Each dictionary contains the following property:
-                    * name
+                    * box coordinate
                     * percentage_probability
-
-            - If extract_detected_objects = True and output_type = 'file' or
-                at its default value, you must parse in the 'output_image_path' as a string to the path you want
-                the detected image to be saved. Then the function will return:
-                1. an array of dictionaries, with each dictionary corresponding to the objects
-                    detected in the image. Each dictionary contains the following property:
-                    * name
-                    * percentage_probability
-                2. an array of string paths to the image of each object extracted from the image
-
-            - If extract_detected_objects = True and output_type = 'array', the the function will return:
-                1. a numpy array of the detected image
-                2. an array of dictionaries, with each dictionary corresponding to the objects
-                    detected in the image. Each dictionary contains the following property:
-                    * name
-                    * percentage_probability
-                3. an array of numpy arrays of each object detected in the image
-
+                3. an array of numpy arrays of each object detected in the image if extract_detected_objects is True
 
             :param input_image:
-            :param output_image_path:
-            :param input_type:
-            :param output_type:
-            :param caption
+            :param caption_mark:
+            :param box_mark:
             :param extract_detected_objects:
             :param minimum_percentage_probability:
             :return output_objects_array:
@@ -170,24 +141,15 @@ class FacesDetection:
                 detected_objects_image_array = []
 
                 if type(input_image) == str:
-                    input_type = "file"
+                    image = read_image_bgr(input_image)
+                    cv2.imshow("t",image)
                 elif type(input_image) == np.ndarray:
-                    input_type = "array"
+                    image = read_image_array(input_image)
                 else:
                     raise ValueError("Wrong type of the input image.")
 
-                if(input_type=="file"):
-                    image = read_image_bgr(input_image)
-                elif(input_type=="array"):
-                    image = read_image_array(input_image)
-                elif(input_type=="stream"):
-                    image = read_image_stream(input_image)
-
                 detected_copy = image.copy()
-                detected_copy = cv2.cvtColor(detected_copy, cv2.COLOR_BGR2RGB)
-
                 detected_copy2 = image.copy()
-                detected_copy2 = cv2.cvtColor(detected_copy2, cv2.COLOR_BGR2RGB)
 
                 #image = preprocess_image(image)
                 image, scale = resize_image(image, min_side=self.__input_image_min, max_side=self.__input_image_max)
@@ -207,13 +169,10 @@ class FacesDetection:
 
                     counting += 1
 
-                    objects_dir = output_image_path + "-objects"
-                    if(extract_detected_objects == True and output_type=="file"):
-                        if (os.path.exists(objects_dir) == False):
-                            os.mkdir(objects_dir)
                     detection_details = detections[index, :4].astype(int)
-                    draw_box(detected_copy, detection_details, color=label_color(2))
-                    if caption == True:
+                    if box_mark == True:
+                        draw_box(detected_copy, detection_details, color=label_color(1))
+                    if caption_mark == True:
                         caption = "{:.3f}".format((score * 100))
                         draw_caption(detected_copy, detection_details, caption)
                     each_object_details = {}
@@ -225,28 +184,12 @@ class FacesDetection:
                     if(extract_detected_objects == True):
                         splitted_copy = detected_copy2.copy()[detection_details[1]:detection_details[3],
                                         detection_details[0]:detection_details[2]]
-                        if(output_type=="file"):
-                            splitted_image_path = os.path.join(objects_dir, self.numbers_to_names[0] + "-" + str(
-                                counting) + ".jpg")
-                            pltimage.imsave(splitted_image_path, splitted_copy)
-                            detected_objects_image_array.append(splitted_image_path)
-                        elif(output_type=="array"):
-                            detected_objects_image_array.append(splitted_copy)
-
-                if(output_type=="file"):
-                    pltimage.imsave(output_image_path, detected_copy)
+                        detected_objects_image_array.append(splitted_copy)
 
                 if(extract_detected_objects == True):
-                    if(output_type=="file"):
-                        return output_objects_array, detected_objects_image_array
-                    elif(output_type=="array"):
-                        return detected_copy, output_objects_array, detected_objects_image_array
-
+                    return detected_copy, output_objects_array, detected_objects_image_array
                 else:
-                    if (output_type == "file"):
-                        return output_objects_array
-                    elif (output_type == "array"):
-                        return detected_copy, output_objects_array
+                    return detected_copy, output_objects_array
             except:
                 raise ValueError("Ensure you specified correct input image, input type, output type and/or output image path ")
 
@@ -338,7 +281,12 @@ class VideoFaceDetection:
                 self.__model_collection.append(model)
                 self.__modelLoaded = True
 
-    def detectFacesFromVideo(self, input_file_path="", output_file_path="", frames_per_second=20, frame_detection_interval=1, minimum_percentage_probability=50, log_progress=False):
+    def detectFacesFromVideo(self, input_file_path="",
+                             output_file_path="",
+                             frames_per_second=20,
+                             frame_detection_interval=1,
+                             minimum_percentage_probability=50,
+                             log_progress=False):
 
         """
                     'detectObjectsFromVideo()' function is used to detect objects observable in the given video path:
