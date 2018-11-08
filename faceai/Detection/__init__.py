@@ -142,7 +142,6 @@ class FacesDetection:
 
                 if type(input_image) == str:
                     image = read_image_bgr(input_image)
-                    cv2.imshow("t",image)
                 elif type(input_image) == np.ndarray:
                     image = read_image_array(input_image)
                 else:
