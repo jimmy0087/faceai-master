@@ -102,5 +102,6 @@ venv.bak/
 
 # mypy
 /build/
+/demo/Model
 /faceai.egg-info/
 /.idea/

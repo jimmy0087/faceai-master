@@ -3,10 +3,10 @@ import cv2
 import numpy as np
 import matplotlib.image as pltimage
 import tensorflow as tf
-from .MTCNN.utils.image import read_image_bgr, read_image_array, read_image_stream, preprocess_image, resize_image
+from ..Utils.images import read_image_bgr, read_image_array, read_image_stream, preprocess_image, resize_image
 from .MTCNN.models.MTCCN import mtccn
-from .MTCNN.utils.visualization import draw_box, draw_caption
-from .MTCNN.utils.colors import label_color
+from ..Utils.visualization import draw_box, draw_caption
+from ..Utils.colors import label_color
 
 
 
@@ -24,7 +24,7 @@ class FacesDetection:
                      The following functions are required to be called before face detection can be made
                      * setModelPath()
                      * At least of the following and it must correspond to the model set in the setModelPath()
-                      [setModelTypeAsRetinaNet()]
+                      [setModelTypeAsMTCCN()]
                      * loadModel() [This must be called once only before performing object detection]
 
                      Once the above functions have been called, you can call the detectFacesFromImage() function of
@@ -52,8 +52,8 @@ class FacesDetection:
 
     def setModelPath(self, model_path):
         """
-         'setModelPath()' function is required and is used to set the file path to a the RetinaNet
-          face detection model trained on the MIDER FACE dataset.
+         'setModelPath()' function is required and is used to set the file path to a the MTCCN
+          face detection model .
           :param model_path:
           :return:
         """

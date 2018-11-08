@@ -5,8 +5,6 @@ from ..models.mtccn_config import config
 from ..utils.nms import  py_nms
 
 class MtcnnDetector(object):
-
-
     def __init__(self,
                  detectors,
                  min_face_size=25,
