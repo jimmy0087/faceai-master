@@ -10,7 +10,7 @@ class MtcnnDetector(object):
                  min_face_size=25,
                  stride=2,
                  threshold=[0.6, 0.7, 0.7],
-                 scale_factor=0.79,
+                 scale_factor=0.5,
                  #scale_factor=0.709,#change
                  slide_window=False):
 

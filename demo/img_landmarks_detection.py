@@ -8,7 +8,7 @@ def main():
     model_path = ['MTCNN_model/PNet_landmark/PNet-30', 'MTCNN_model/RNet_landmark/RNet-22',
                   'MTCNN_model/ONet_landmark/ONet-22']
     input_path = os.path.join(execution_path, "land.jpg")
-    output_path = os.path.join(execution_path, "imagenew.jpg")
+    output_path = os.path.join(execution_path, "landnew.jpg")
 
     facedetector = FacesDetection()
     facedetector.setModelTypeAsMTCNN()
@@ -28,6 +28,7 @@ def main():
 
     img,lands = landsdetector.detectLandmarksFromImage(img,dets,points_mark = True)
     cv2.imshow("t",img)
+    cv2.imwrite("landnew.jpg", img)
 
 if __name__ == '__main__':
     main()

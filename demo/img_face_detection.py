@@ -13,10 +13,11 @@ def main():
     facedetector = FacesDetection()
     facedetector.setModelTypeAsMTCNN()
     facedetector.setModelPath(model_path)
-    facedetector.loadModel(min_face_size=24)
+    facedetector.loadModel(min_face_size=12)
 
     img,dets = facedetector.detectFacesFromImage(input_image=input_path,box_mark=True)
-    cv2.imshow("t",img)
+    #cv2.imshow("t",img)
+    cv2.imwrite("imagenew.jpg", img)
     print('the number of faces: {:0>3d}'.format((len(dets))))
 
 if __name__ == '__main__':
