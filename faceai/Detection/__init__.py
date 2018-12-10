@@ -7,7 +7,7 @@ from ..Utils.images import read_image_bgr, read_image_array, read_image_stream, 
 from .MTCNN.models.MTCCN import mtccn
 from ..Utils.visualization import draw_box, draw_caption
 from ..Utils.colors import label_color
-
+from ..Utils.download import download_file_from_google_drive
 
 
 def get_session():
@@ -41,6 +41,7 @@ class FacesDetection:
         self.__input_image_max = 800
 
         self.numbers_to_names = {0: 'face'}
+        self.__model_id = {'mtcnn': '1RRj9iPndDx3KXyjfG1cpfug-1X8RyDh5'}
 
     def setModelTypeAsMTCNN(self):
         """
@@ -48,21 +49,9 @@ class FacesDetection:
         for the face detection.
         :return:
         """
-        self.__modelType = "MTCCN"
+        self.__modelType = "mtcnn"
 
-    def setModelPath(self, model_path):
-        """
-         'setModelPath()' function is required and is used to set the file path to a the MTCCN
-          face detection model .
-          :param model_path:
-          :return:
-        """
-
-        if(self.__modelPathAdded == False):
-            self.modelPath = model_path
-            self.__modelPathAdded = True
-
-    def loadModel(self, detection_speed="normal",min_face_size = 24):
+    def loadModel(self, model_path='',detection_speed="normal",min_face_size = 24):
         """
                 'loadModel()' function is required and is used to load the model structure into the program from the file path defined
                 in the setModelPath() function. This function receives an optional value which is "detection_speed".
@@ -92,11 +81,13 @@ class FacesDetection:
             self.__input_image_min = 100
             self.__input_image_max = 250
 
-
+        cache_dir = os.path.join(os.path.expanduser('~'), '.faceai')
         if (self.__modelLoaded == False):
             if(self.__modelType == ""):
                 raise ValueError("You must set a valid model type before loading the model.")
-            elif(self.__modelType == "MTCCN"):
+            elif(self.__modelType == "mtcnn"):
+                des_file = '/'.join((cache_dir, self.__modelType))
+                self.modelPath = download_file_from_google_drive(self.__model_id[self.__modelType], des_file)
                 model = mtccn(self.modelPath,minfacesize=min_face_size)
                 self.__model_collection.append(model)
                 self.__modelLoaded = True

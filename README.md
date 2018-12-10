@@ -10,6 +10,7 @@ Now **FaceAI** is an original version and only support MTCCN to detect face.
 Eventually, **FaceAI** will offer others various kind of applications about face.
 
 ### Update Record
+- V0.1.0 : Add landmarks detection module
 - V0.0.1 : Initialize the file structure of FaceAI and add MTCCN model.
 
 ### Dependencies
@@ -117,7 +118,7 @@ Eventually, **FaceAI** will offer others various kind of applications about face
 
 To install ImageAI, run the python installation instruction below in the command line: 
 
-pip install 
+pip install faceai-0.1.2-py2.py3-none-any.whl
 
 ### References
 

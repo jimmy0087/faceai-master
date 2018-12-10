@@ -153,13 +153,13 @@ class DANDetector(object):
         self.dan = DAN(init_inf["initLandmarks"])
         self.sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True, gpu_options=tf.GPUOptions(allow_growth=True)))
         saver = tf.train.Saver()
-        model_dict = '/'.join(model_path.split('/')[:-1])
-        ckpt = tf.train.get_checkpoint_state(model_dict)
+        #model_dict = '/'.join(model_path.split('/')[:-1])
+        ckpt = tf.train.get_checkpoint_state(model_path)
         print(model_path)
         readstate = ckpt and ckpt.model_checkpoint_path
         assert readstate, "the params dictionary is not valid"
         print("restore models' param")
-        saver.restore(self.sess, model_path)
+        saver.restore(self.sess, model_path+'/model')
 
     def predict(self, databatch):
         s2_landmarks = self.sess.run(self.dan['S2_Ret'],

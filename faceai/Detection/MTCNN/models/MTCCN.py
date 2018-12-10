@@ -22,9 +22,9 @@ def mtccn( modelpath =None,
     thresh = [0.9, 0.6, 0.7]
     detectors = [None, None, None]
 
-    detectors[0] = FcnDetector(P_Net, modelpath[0])
-    detectors[1] = Detector(R_Net, 24, batchsize[1], modelpath[1]) if testmodel in ["RNet" ,"ONet"] else None
-    detectors[2] = Detector(O_Net, 48, batchsize[2], modelpath[2]) if testmodel in ["ONet"] else None
+    detectors[0] = FcnDetector(P_Net, modelpath + '/PNet')
+    detectors[1] = Detector(R_Net, 24, batchsize[1], modelpath + '/RNet') if testmodel in ["RNet" ,"ONet"] else None
+    detectors[2] = Detector(O_Net, 48, batchsize[2], modelpath + '/ONet') if testmodel in ["ONet"] else None
 
     mtcnn_detector = MtcnnDetector(detectors=detectors, min_face_size=min_face_size,
                                     threshold=thresh)

@@ -5,6 +5,7 @@ import tensorflow as tf
 from .DAN.models.DAN import dan
 from ..Utils.images import read_image_bgr, read_image_array, preprocess_image, resize_image
 from ..Utils.visualization import draw_box, draw_caption,draw_landmarks
+from ..Utils.download import download_file_from_google_drive
 
 def get_session():
     config = tf.ConfigProto()
@@ -35,6 +36,7 @@ class LandmarksDetection:
         self.__model_collection = []
         self.__input_image_min = 1333
         self.__input_image_max = 800
+        self.__model_id={'dan':'1Qh_OWZROneM01q8fxS9Clf7zfj5FBTdd'}
 
     def setModelTypeAsDAN(self):
         """
@@ -42,21 +44,9 @@ class LandmarksDetection:
         for the face detection.
         :return:
         """
-        self.__modelType = "DAN"
+        self.__modelType = "dan"
 
-    def setModelPath(self, model_path):
-        """
-         'setModelPath()' function is required and is used to set the file path to a the DAN
-          face landmarks detection model trained on the W300 dataset.
-          :param model_path:
-          :return:
-        """
-
-        if(self.__modelPathAdded == False):
-            self.modelPath = model_path
-            self.__modelPathAdded = True
-
-    def loadModel(self):
+    def loadModel(self,model_path=''):
         """
                 'loadModel()' function is required and is used to load the model structure into the program from the file path defined
                 in the setModelPath() function.
@@ -66,11 +56,14 @@ class LandmarksDetection:
                 :param
                 :return:
         """
+        cache_dir = os.path.join(os.path.expanduser('~'), '.faceai')
 
         if (self.__modelLoaded == False):
             if(self.__modelType == ""):
                 raise ValueError("You must set a valid model type before loading the model.")
-            elif(self.__modelType == "DAN"):
+            elif(self.__modelType == "dan"):
+                des_file = '/'.join((cache_dir,self.__modelType))
+                self.modelPath = download_file_from_google_drive(self.__model_id[self.__modelType], des_file)
                 model = dan(self.modelPath)
                 self.__model_collection.append(model)
                 self.__modelLoaded = True

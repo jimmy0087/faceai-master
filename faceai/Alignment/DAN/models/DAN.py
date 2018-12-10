@@ -11,7 +11,7 @@ def dan(modelpath =None,
        :return: DAN model
     """
     execution_path = os.path.dirname(__file__)
-    initInf = np.load(os.path.join(execution_path,'initInf.npz'))
+    initInf = np.load(os.path.join(modelpath,'initInf.npz'))
 
     danDetactor = DANDetector(initInf, modelpath)
     return danDetactor

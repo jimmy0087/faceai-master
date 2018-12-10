@@ -5,14 +5,11 @@ import cv2
 
 def main():
     execution_path = os.getcwd()
-    model_path = ['MTCNN_model/PNet_landmark/PNet-30', 'MTCNN_model/RNet_landmark/RNet-22',
-                  'MTCNN_model/ONet_landmark/ONet-22']
     input_path = os.path.join(execution_path, "land.jpg")
     output_path = os.path.join(execution_path, "landnew.jpg")
 
     facedetector = FacesDetection()
     facedetector.setModelTypeAsMTCNN()
-    facedetector.setModelPath(model_path)
     facedetector.loadModel(min_face_size=48)
 
     img,infs = facedetector.detectFacesFromImage(input_image=input_path,box_mark=False)
@@ -23,7 +20,6 @@ def main():
 
     landsdetector = LandmarksDetection()
     landsdetector.setModelTypeAsDAN()
-    landsdetector.setModelPath("./Model/Model")
     landsdetector.loadModel()
 
     img,lands = landsdetector.detectLandmarksFromImage(img,dets,points_mark = True)
