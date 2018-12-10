@@ -1,12 +1,8 @@
 import os
-import tensorflow as tf
-import numpy as np
 import requests
 import tarfile
-import zipfile
 import shutil
-import six
-from google_drive_downloader import GoogleDriveDownloader as gdd
+
 
 def download_file_from_google_drive(id, destination):
     URL = "https://docs.google.com/uc?export=download"
@@ -17,31 +13,30 @@ def download_file_from_google_drive(id, destination):
     else:
         if not os.path.exists(save_path):
             os.makedirs(save_path)
-    print('*'+file_name + " pre-trained model will download at "+ destination)
     fname = os.path.join(save_path, file_name + '.tar.gz')
-
-    session = requests.Session()
-    response = session.get(URL, params = { 'id' : id }, stream = True)
-    token = get_confirm_token(response)
-
-    if token:
-        params = { 'id' : id, 'confirm' : token }
-        response = session.get(URL, params = params, stream = True)
-
     try:
+        print('*'+file_name + " pre-trained model will download at "+ destination)
+        session = requests.Session()
+        response = session.get(URL, params = { 'id' : id }, stream = True)
+        token = get_confirm_token(response)
+
+        if token:
+            params = { 'id' : id, 'confirm' : token }
+            response = session.get(URL, params = params, stream = True)
         save_response_content(response, fname)
-    except:
+    except :
         print("*download failed, please try again.")
-        os.remove(fname)
+        if os.path.exists(fname):
+            os.remove(fname)
 
     try:
         t = tarfile.open(fname)
         t.extractall(path=save_path)
-    except:
+        print("*download succeed !")
+    except (tarfile.TarError, RuntimeError, KeyboardInterrupt):
         print("*untar failed, please try again.")
-        shutil.rmtree(destination)
-
-    print("*download succeed !")
+        if os.path.exists(destination):
+            shutil.rmtree(destination)
 
     return destination
 
@@ -57,13 +52,3 @@ def save_response_content(response, destination):
         for chunk in response.iter_content(CHUNK_SIZE):
             if chunk: # filter out keep-alive new chunks
                 f.write(chunk)
-
-
-
-if __name__ == "__main__":
-    file_id = '1-diIoodSWEVLdtcMJsftWhgaQF6J5a1I'
-    destination = 'F:/postgraduate/program/detection/faceai-master/data/mnist.zip'
-    gdd.download_file_from_google_drive(file_id=file_id,
-                                        dest_path=destination,
-                                        unzip=False)
-    download_file_from_google_drive(file_id, destination)
