@@ -1,19 +1,3 @@
-"""
-Copyright 2017-2018 Fizyr (https://fizyr.com)
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
-
 import cv2
 import numpy as np
 
@@ -32,6 +16,7 @@ def draw_box(image, box, color, thickness=2):
     b = np.array(box).astype(int)
     cv2.rectangle(image, (b[0], b[1]), (b[2], b[3]), color, thickness, cv2.LINE_AA)
 
+end_list = np.array([17, 22, 27, 42, 48, 31, 36, 68], dtype = np.int32) - 1
 def draw_landmarks(image, landmarks, color = label_color(0), thickness=2):
     """ Draws a landmarks on an image with a given color.
 
@@ -41,9 +26,14 @@ def draw_landmarks(image, landmarks, color = label_color(0), thickness=2):
         color     : The color of the box.
         thickness : The thickness of the lines to draw a box with.
     """
-    b = np.array(landmarks).astype(int)
+    b = np.array(landmarks).astype(np.int32)
     for i in range(b.shape[0]):
-        cv2.circle(image, (b[i, 0], b[i, 1]), thickness, color,-1)
+        st = b[i]
+        cv2.circle(image, (st[0], st[1]), thickness, color,-1)
+        if i in end_list:
+            continue
+        ed = b[i + 1]
+        cv2.line(image, (st[0], st[1]), (ed[0], ed[1]), (255, 255, 255), 1)
 
 def draw_caption(image, box, caption):
     """ Draws a caption above the box in an image.

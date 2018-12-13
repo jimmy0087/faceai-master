@@ -3,9 +3,12 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from .DAN.models.DAN import dan
+from .PRNet.models.api import PRN
 from ..Utils.images import read_image_bgr, read_image_array, preprocess_image, resize_image
 from ..Utils.visualization import draw_box, draw_caption,draw_landmarks
 from ..Utils.download import download_file_from_google_drive
+
+
 
 def get_session():
     config = tf.ConfigProto()
@@ -36,7 +39,8 @@ class LandmarksDetection:
         self.__model_collection = []
         self.__input_image_min = 1333
         self.__input_image_max = 800
-        self.__model_id={'dan':'1Qh_OWZROneM01q8fxS9Clf7zfj5FBTdd'}
+        self.__model_id={ 'dan' : '1Qh_OWZROneM01q8fxS9Clf7zfj5FBTdd',
+                         'prnet': '1yAb66iD7PF_GHTbXSSndOVlY6xXOJhFt'}
 
     def setModelTypeAsDAN(self):
         """
@@ -45,6 +49,14 @@ class LandmarksDetection:
         :return:
         """
         self.__modelType = "dan"
+
+    def setModelTypeAsPRNet(self):
+        """
+        'setModelTypeAsDAN()' is used to set the model type to the DAN model
+        for the face detection.
+        :return:
+        """
+        self.__modelType = "prnet"
 
     def loadModel(self,model_path=''):
         """
@@ -65,6 +77,12 @@ class LandmarksDetection:
                 des_file = '/'.join((cache_dir,self.__modelType))
                 self.modelPath = download_file_from_google_drive(self.__model_id[self.__modelType], des_file)
                 model = dan(self.modelPath)
+                self.__model_collection.append(model)
+                self.__modelLoaded = True
+            elif (self.__modelType == "prnet"):
+                des_file = '/'.join((cache_dir, self.__modelType))
+                self.modelPath = download_file_from_google_drive(self.__model_id[self.__modelType], des_file)
+                model = PRN(self.modelPath)
                 self.__model_collection.append(model)
                 self.__modelLoaded = True
 

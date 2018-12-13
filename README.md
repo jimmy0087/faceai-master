@@ -10,6 +10,7 @@ Now **FaceAI** is an original version and only support MTCCN to detect face.
 Eventually, **FaceAI** will offer others various kind of applications about face.
 
 ### Update Record
+- V0.2.0 : Add download pre-trained automatically from google drive
 - V0.1.0 : Add landmarks detection module
 - V0.0.1 : Initialize the file structure of FaceAI and add MTCCN model.
 
@@ -119,6 +120,16 @@ Eventually, **FaceAI** will offer others various kind of applications about face
 To install ImageAI, run the python installation instruction below in the command line: 
 
 pip install faceai-0.1.2-py2.py3-none-any.whl
+
+### Pre-trained model
+
+if you can not download model ,please download by hand,and code will remind you where you should uncompress these file.
+> *mtcnn pre-trained model will download at C:/Users/Administrator/.faceai/mtcnn
+
+- [DAN](https://drive.google.com/file/d/1Qh_OWZROneM01q8fxS9Clf7zfj5FBTdd/view?usp=sharing)
+
+- [MTCNN](https://drive.google.com/file/d/1RRj9iPndDx3KXyjfG1cpfug-1X8RyDh5/view?usp=sharing)
+
 
 ### References
 
