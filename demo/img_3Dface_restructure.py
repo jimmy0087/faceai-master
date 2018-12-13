@@ -3,11 +3,10 @@ from faceai.Alignment import LandmarksDetection
 from faceai.ThrDFace import ThreeDimRestructure
 import os
 import cv2
-from skimage.io import imread, imsave
-import numpy as np
+
 def main():
     execution_path = os.getcwd()
-    input_path = os.path.join(execution_path, "3d_2.jpg")
+    input_path = os.path.join(execution_path, "3d.jpg")
     output_path = os.path.join(execution_path, "landnew.jpg")
 
     facedetector = FacesDetection()
@@ -29,8 +28,9 @@ def main():
         cv2.imshow("vertices",img_['img_show']['vertices'])
         cv2.imshow("pose", img_['img_show']['pose'])
         cv2.imshow("depth", img_['img_show']['depth'])
-
-
+        cv2.imwrite("3d_vertices.jpg", img_['img_show']['vertices'])
+        cv2.imwrite("3d_pose.jpg", img_['img_show']['pose'])
+        cv2.imwrite("3d_depth.jpg", img_['img_show']['depth'])
 
 if __name__ == '__main__':
     main()

@@ -34,7 +34,7 @@ def get_uv_mask(vertices_vis, triangles, uv_coords, h, w, resolution):
 
 def get_depth_image(vertices, triangles, h, w, isShow = False):
     z = vertices[:, 2:]
-    if isShow:
+    if not isShow:
         z = z/max(z)
     depth_image = render_texture(vertices.T, z.T, triangles.T, h, w, 1)
     return np.squeeze(depth_image)

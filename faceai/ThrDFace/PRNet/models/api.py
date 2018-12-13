@@ -101,9 +101,9 @@ class PRN:
         return pos,vertices,colors,image_show
 
     def get_depth(self,vertices,h,w):
-        depth_image = get_depth_image(vertices, self.triangles, h, w, True)
-        depth = get_depth_image(vertices, self.triangles, h, w)
-        return depth_image,depth
+        depth_inf = get_depth_image(vertices, self.triangles, h, w, True)
+        depth_image = np.uint8((depth_inf/np.max(depth_inf))*255)
+        return depth_image,depth_inf
 
     def get_pose(self,image,vertices,kpt):
         camera_matrix, pose = estimate_pose(vertices,self.canonical_vertices)
