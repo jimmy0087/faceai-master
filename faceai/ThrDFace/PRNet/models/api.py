@@ -6,6 +6,13 @@ from time import time
 import cv2 as cv2
 from .predictor import PosPrediction
 from skimage.transform import rescale, resize
+
+from ..utils.estimate_pose import estimate_pose
+from ..utils.rotate_vertices import frontalize
+from ..utils.render_app import get_visibility, get_uv_mask, get_depth_image
+from ..utils.write import write_obj_with_colors, write_obj_with_texture
+from ..utils.cv_plot import plot_vertices,plot_pose_box
+
 class PRN:
     ''' Joint 3D Face Reconstruction and Dense Alignment with Position Map Regression Network
     Args:
@@ -30,7 +37,8 @@ class PRN:
         self.uv_kpt_ind = np.loadtxt(prefix + '/uv-data/uv_kpt_ind.txt').astype(np.int32) # 2 x 68 get kpt
         self.face_ind = np.loadtxt(prefix + '/uv-data/face_ind.txt').astype(np.int32) # get valid vertices in the pos map
         self.triangles = np.loadtxt(prefix + '/uv-data/triangles.txt').astype(np.int32) # ntri x 3
-        
+        self.canonical_vertices = np.load(prefix + '/uv-data/canonical_vertices.npy')
+
         self.uv_coords = self.generate_uv_coords()        
 
     def generate_uv_coords(self):
@@ -53,9 +61,54 @@ class PRN:
 
     def processImg(self, image, recs):
         pos = self.get_pos(image,recs)
-        landmarks_3d = self.get_landmarks(pos)
-        landmarks = landmarks_3d[:,:2]
-        return landmarks
+        kpt_3d = self.get_landmarks(pos)
+        kpt = kpt_3d[:,:2]
+        return kpt
+
+    def process3DFile(self,image,recs,output_path='.',depth=False, pose = False,name='default'):
+        img_show ={}
+        img_inf = {}
+
+        [h, w, c] = image.shape
+        pos,vertices,save_color,img_vertices_show = self.get_3D(image,recs)
+        img_show["vertices"] = img_vertices_show
+        img_inf["vertices"] = vertices
+
+        kpt = self.get_landmarks(pos)[:,:2]
+
+        save_vertices = vertices.copy()
+        save_vertices[:, 1] = h - 1 - save_vertices[:, 1]
+        write_obj_with_colors(os.path.join(output_path, name + '.obj'), save_vertices, self.triangles, save_color)
+        print("face 3d model is saved at " + os.path.join(output_path, name + '.obj'))
+
+        if depth:
+            depth_image_show ,depth_inf= self.get_depth(vertices,h,w)
+            img_show["depth"] = depth_image_show
+            img_inf["depth"] = depth_inf
+        if pose:
+            camera_matrix, pose, image_pose_show = self.get_pose(image,vertices,kpt)
+            img_show["pose"] = image_pose_show
+            img_inf["pose"] = pose
+
+        return img_show,img_inf
+
+    def get_3D(self,image,recs):
+        pos = self.get_pos(image, recs)
+        vertices = self.get_vertices(pos)
+        colors = self.get_colors(image, vertices)
+        image_show = plot_vertices(image, vertices)
+
+        return pos,vertices,colors,image_show
+
+    def get_depth(self,vertices,h,w):
+        depth_image = get_depth_image(vertices, self.triangles, h, w, True)
+        depth = get_depth_image(vertices, self.triangles, h, w)
+        return depth_image,depth
+
+    def get_pose(self,image,vertices,kpt):
+        camera_matrix, pose = estimate_pose(vertices,self.canonical_vertices)
+        image_pose = plot_pose_box(image, camera_matrix, kpt)
+        return camera_matrix, pose,image_pose
 
     def get_pos(self, input, image_info = None):
         ''' process image with crop operation.
@@ -164,8 +217,9 @@ class PRN:
         vertices[:,0] = np.minimum(np.maximum(vertices[:,0], 0), w - 1)  # x
         vertices[:,1] = np.minimum(np.maximum(vertices[:,1], 0), h - 1)  # y
         ind = np.round(vertices).astype(np.int32)
-        colors = image[ind[:,1], ind[:,0], :] # n x 3
 
+        colors = image[ind[:,1], ind[:,0], :] # n x 3
+        colors = colors[:, [2, 0, 1]]
         return colors
 
 

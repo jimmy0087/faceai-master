@@ -2,8 +2,7 @@ import os
 import cv2
 import numpy as np
 import tensorflow as tf
-from .DAN.models.DAN import dan
-from ..ThrDFace.PRNet.models.api import PRN
+from .PRNet.models.api import PRN
 from ..Utils.images import read_image_bgr, read_image_array, preprocess_image, resize_image
 from ..Utils.visualization import draw_box, draw_caption,draw_landmarks
 from ..Utils.download import download_file_from_google_drive
@@ -15,19 +14,19 @@ def get_session():
     config.gpu_options.allow_growth = True
     return tf.Session(config=config)
 
-class LandmarksDetection:
+class ThreeDimRestructure:
     """
-        This is the face landmarks class for images in the FaceAI library. It provides support for DAN
-         face landmarks detection network . After instantiating this class, you can set it's properties and
-         make landmarks detections using it's pre-defined functions.
+        This is the 3-D face restructure for images in the FaceAI library. It provides support for PRNet
+         . After instantiating this class, you can set it's properties and make 3-D face restructure
+         using it's pre-defined functions.
 
          The following functions are required to be called before face detection can be made
          * setModelPath()
          * At least of the following and it must correspond to the model set in the setModelPath()
-          [setModelTypeAsDAN()]
+          [setModelTypeAsPRNet()]
          * loadModel() [This must be called once only before performing object detection]
 
-         Once the above functions have been called, you can call the detectLandmarksFromImage() function of
+         Once the above functions have been called, you can call the restructure3DFaceFromImage() function of
          the face detection instance face at anytime to obtain observable objects in any image.
     """
 
@@ -39,16 +38,7 @@ class LandmarksDetection:
         self.__model_collection = []
         self.__input_image_min = 1333
         self.__input_image_max = 800
-        self.__model_id={ 'dan' : '1Qh_OWZROneM01q8fxS9Clf7zfj5FBTdd',
-                         'prnet': '1yAb66iD7PF_GHTbXSSndOVlY6xXOJhFt'}
-
-    def setModelTypeAsDAN(self):
-        """
-        'setModelTypeAsDAN()' is used to set the model type to the DAN model
-        for the face detection.
-        :return:
-        """
-        self.__modelType = "dan"
+        self.__model_id={'prnet': '1yAb66iD7PF_GHTbXSSndOVlY6xXOJhFt'}
 
     def setModelTypeAsPRNet(self):
         """
@@ -73,12 +63,6 @@ class LandmarksDetection:
         if (self.__modelLoaded == False):
             if(self.__modelType == ""):
                 raise ValueError("You must set a valid model type before loading the model.")
-            elif(self.__modelType == "dan"):
-                des_file = '/'.join((cache_dir,self.__modelType))
-                self.modelPath = download_file_from_google_drive(self.__model_id[self.__modelType], des_file)
-                model = dan(self.modelPath)
-                self.__model_collection.append(model)
-                self.__modelLoaded = True
             elif (self.__modelType == "prnet"):
                 des_file = '/'.join((cache_dir, self.__modelType))
                 self.modelPath = download_file_from_google_drive(self.__model_id[self.__modelType], des_file)
@@ -87,10 +71,10 @@ class LandmarksDetection:
                 self.__modelLoaded = True
 
 
-    def detectLandmarksFromImage(self,input_image="",dets=None,
-                             points_mark = False):
+    def restructure3DFaceFromImage(self,input_image="",output_path='.',dets=None,
+                                    depth = False,pose = False):
         """
-            'detectLanmarksFromImage()' function is used to detect faces landmarks in the given image path:
+            'restructure3DFaceFromImage()' function is used to restructure 3D face in the given image path:
                     * input_image , which can be file to path, image numpy array ,the function will recognize the type of the input automatically
                     * dets , the boundaries of the objective faces
                     * points_mark , whether the output image are marked with points
@@ -123,16 +107,14 @@ class LandmarksDetection:
 
                 model = self.__model_collection[0]
                 for i,det in enumerate(dets):
-                    landmarks = model.processImg(image,det).astype(np.int16)
-
-                    if points_mark == True:
-                        draw_landmarks(detected_copy, landmarks)
+                    img_show,img_3d_inf = model.process3DFile(image,det,output_path=output_path,depth=depth,pose=pose,name=str(i))
 
                     each_object_details = {}
-                    #each_object_details["name"] = self.numbers_to_names[label]
-                    each_object_details["landmarks_details"] = landmarks
+                    each_object_details["det"] = det
+                    each_object_details["img_show"] = img_show
+                    each_object_details["img_3d_inf"] = img_3d_inf
                     output_objects_array.append(each_object_details)
 
-                return detected_copy, output_objects_array
+                return output_objects_array
             except:
                 raise ValueError("Ensure you specified correct input image, input type, input rectangles!")
