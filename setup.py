@@ -1,6 +1,6 @@
 from setuptools import setup,find_packages
 setup(name="faceai",
-      version='0.2.0',
+      version='0.3.2',
       description='Deep Learning library for applications about face.',
       url="https://github.com/jimmy0087/faceai-master",
       author='JimmyYoung',
