@@ -1,8 +1,10 @@
 from faceai.Detection import FacesDetection
 from faceai.Alignment import LandmarksDetection
 from faceai.ThrDFace import ThreeDimRestructure
+from faceai.Utils.visualization import show_3d
 import os
 import cv2
+import matplotlib.pyplot as plt
 
 def main():
     execution_path = os.getcwd()
@@ -24,13 +26,33 @@ def main():
     landsdetector.loadModel()
 
     img_3d = landsdetector.restructure3DFaceFromImage(img,dets=dets,depth=True,pose=True)
+
+    fig = plt.figure()
     for img_ in img_3d:
-        cv2.imshow("vertices",img_['img_show']['vertices'])
-        cv2.imshow("pose", img_['img_show']['pose'])
-        cv2.imshow("depth", img_['img_show']['depth'])
-        cv2.imwrite("3d_vertices.jpg", img_['img_show']['vertices'])
-        cv2.imwrite("3d_pose.jpg", img_['img_show']['pose'])
-        cv2.imwrite("3d_depth.jpg", img_['img_show']['depth'])
+        show_3d(img_['img_3d_inf']['landmarks_3d'])
+
+        a = fig.add_subplot(2, 2, 1)
+        a.axis('off')
+        a.imshow(img[:, :, [2,1,0]])
+
+        a = fig.add_subplot(2, 2, 2)
+        a.axis('off')
+        a.imshow(img_['img_show']['vertices'][:,:,[2,1,0]])
+
+        a = fig.add_subplot(2, 2, 3)
+        a.axis('off')
+        a.imshow(img_['img_show']['pose'][:,:,[2,1,0]])
+
+        a = fig.add_subplot(2, 2, 4)
+        a.axis('off')
+        a.imshow(img_['img_show']['depth'])
+        plt.show()
+
+        # cv2.imwrite("3d_vertices_mat.jpg", img_['img_show']['vertices'])
+        # cv2.imwrite("3d_vertices.jpg", img_['img_show']['vertices'])
+        # cv2.imwrite("3d_pose.jpg", img_['img_show']['pose'])
+        # cv2.imwrite("3d_depth.jpg", img_['img_show']['depth'])
+
 
 if __name__ == '__main__':
     main()

@@ -25,7 +25,7 @@ def plot_vertices(image, vertices):
     vertices = np.round(vertices).astype(np.int32)
     for i in range(0, vertices.shape[0], 2):
         st = vertices[i, :2]
-        image = cv2.circle(image,(st[0], st[1]), 1, (255,0,0), -1)  
+        image = cv2.circle(image,(st[0], st[1]), 1, (0,255,0), -1)
     return image
 
 

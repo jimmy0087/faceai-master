@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
-
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from .colors import label_color
 
 
@@ -96,4 +97,11 @@ def draw_annotations(image, annotations, color=(0, 255, 0), generator=None):
         draw_caption(image, a, caption)
 
         draw_box(image, a, color=c)
+
+def show_3d(data):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(data[:,0], data[:,1], data[:,2], c='g', marker='.',alpha=0.5)
+    ax.axis('off')
+    plt.show()
 

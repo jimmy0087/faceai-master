@@ -71,8 +71,11 @@ class PRN:
 
         [h, w, c] = image.shape
         pos,vertices,save_color,img_vertices_show = self.get_3D(image,recs)
+        kpt_3d = self.get_landmarks(pos)
         img_show["vertices"] = img_vertices_show
         img_inf["vertices"] = vertices
+        img_inf["landmarks_3d"] = kpt_3d
+        img_inf["color"] = save_color
 
         kpt = self.get_landmarks(pos)[:,:2]
 
@@ -107,7 +110,7 @@ class PRN:
 
     def get_pose(self,image,vertices,kpt):
         camera_matrix, pose = estimate_pose(vertices,self.canonical_vertices)
-        image_pose = plot_pose_box(image, camera_matrix, kpt)
+        image_pose = plot_pose_box(image, camera_matrix, kpt,color=(0,255,0))
         return camera_matrix, pose,image_pose
 
     def get_pos(self, input, image_info = None):
@@ -219,7 +222,7 @@ class PRN:
         ind = np.round(vertices).astype(np.int32)
 
         colors = image[ind[:,1], ind[:,0], :] # n x 3
-        colors = colors[:, [2, 0, 1]]
+        colors = colors[:, [2, 1, 0]]
         return colors
 
 
