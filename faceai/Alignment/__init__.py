@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 from .DAN.models.DAN import dan
 from ..ThrDFace.PRNet.models.api import PRN
-from ..Utils.images import read_image_bgr, read_image_array, preprocess_image, resize_image
+from ..Utils.images import read_image, read_image_array, preprocess_image, resize_image
 from ..Utils.visualization import draw_box, draw_caption,draw_landmarks
 from ..Utils.download import download_file_from_google_drive
 
@@ -114,7 +114,7 @@ class LandmarksDetection:
                 output_objects_array = []
 
                 if type(input_image) == str:
-                    image = read_image_bgr(input_image)
+                    image = read_image(input_image)
                 elif type(input_image) == np.ndarray:
                     image = read_image_array(input_image)
                 else:

@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import matplotlib.image as pltimage
 import tensorflow as tf
-from ..Utils.images import read_image_bgr, read_image_array, read_image_stream, preprocess_image, resize_image
+from ..Utils.images import read_image, read_image_array, preprocess_image, resize_image
 from .MTCNN.models.MTCCN import mtccn
 from ..Utils.visualization import draw_box, draw_caption
 from ..Utils.colors import label_color
@@ -132,7 +132,7 @@ class FacesDetection:
                 detected_objects_image_array = []
 
                 if type(input_image) == str:
-                    image = read_image_bgr(input_image)
+                    image = read_image(input_image)
                 elif type(input_image) == np.ndarray:
                     image = read_image_array(input_image)
                 else:

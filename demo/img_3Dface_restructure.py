@@ -1,11 +1,11 @@
 from faceai.Detection import FacesDetection
 from faceai.Alignment import LandmarksDetection
 from faceai.ThrDFace import ThreeDimRestructure
-from faceai.Utils.visualization import show_3d
+from faceai.Utils.visualization import show_3d_point,show_3d_mesh
 import os
 import cv2
 import matplotlib.pyplot as plt
-
+import numpy as np
 def main():
     execution_path = os.getcwd()
     input_path = os.path.join(execution_path, "3d.jpg")
@@ -28,8 +28,12 @@ def main():
     img_3d = landsdetector.restructure3DFaceFromImage(img,dets=dets,depth=True,pose=True)
 
     fig = plt.figure()
+    show_vertice = []
     for img_ in img_3d:
-        show_3d(img_['img_3d_inf']['landmarks_3d'])
+        index = np.random.randint(0, high=len(img_['img_3d_inf']['vertices']), size=2000)
+        show_vertice = img_['img_3d_inf']['vertices'][index]
+        show_3d_point(np.array(show_vertice))
+        show_3d_point(img_['img_3d_inf']['landmarks_3d'])
 
         a = fig.add_subplot(2, 2, 1)
         a.axis('off')

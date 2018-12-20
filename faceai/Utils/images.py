@@ -20,23 +20,17 @@ import time
 import numpy as np
 import scipy.ndimage as ndi
 import cv2
-from PIL import Image
 
 from .transform import change_transform_origin, transform_aabb
 
 
-def read_image_bgr(path):
-    image = np.asarray(Image.open(path).convert('RGB'))
-    return image[:, :, ::-1].copy()
-
-def read_image_array(image_array):
-    image = np.asarray(Image.fromarray(np.uint8(image_array)))
+def read_image(path):
+    image = cv2.imread(path)
     return image.copy()
 
-def read_image_stream(image_stream):
-    image = np.asarray(Image.open(image_stream))
-    return image[:, :, ::-1].copy()
-
+def read_image_array(image_array):
+    image = np.asarray(np.uint8(image_array))
+    return image.copy()
 
 def preprocess_image(x):
     # mostly identical to "https://github.com/fchollet/keras/blob/master/keras/applications/imagenet_utils.py"
