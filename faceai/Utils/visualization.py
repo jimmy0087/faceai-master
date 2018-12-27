@@ -98,7 +98,7 @@ def draw_annotations(image, annotations, color=(0, 255, 0), generator=None):
 
         draw_box(image, a, color=c)
 
-def show_3d_point(data):
+def show_3d_point(data,color=None):
     import matplotlib.colors
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -106,8 +106,13 @@ def show_3d_point(data):
         colormap = plt.get_cmap("rainbow")
     else:
         colormap = plt.get_cmap("winter")
-    norm = matplotlib.colors.Normalize(vmin=min(data[:,2]), vmax=max(data[:,2]))
-    ax.scatter(data[:,0], data[:,1], data[:,2], c=colormap(norm(data[:,2])) ,marker='.',alpha=0.5)
+
+    if color is not None:
+        ax.scatter(data[:,0], data[:,1], data[:,2], c=color/255.0 ,marker='.',alpha=0.5)
+    else:
+        norm = matplotlib.colors.Normalize(vmin=min(data[:, 2]), vmax=max(data[:, 2]))
+        ax.scatter(data[:, 0], data[:, 1], data[:, 2], c=colormap(norm(data[:, 2])), marker='.', alpha=0.5)
+
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')

@@ -30,9 +30,9 @@ def main():
     fig = plt.figure()
     show_vertice = []
     for img_ in img_3d:
-        index = np.random.randint(0, high=len(img_['img_3d_inf']['vertices']), size=2000)
+        index = np.random.randint(0, high=len(img_['img_3d_inf']['vertices']), size=20000)
         show_vertice = img_['img_3d_inf']['vertices'][index]
-        show_3d_point(np.array(show_vertice))
+        show_3d_point(np.array(show_vertice),img_['img_3d_inf']['color'][index])
         show_3d_point(img_['img_3d_inf']['landmarks_3d'])
 
         a = fig.add_subplot(2, 2, 1)
