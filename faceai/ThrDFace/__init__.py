@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from .PRNet.models.api import PRN
+from .PRNet.utils.write import write_obj_with_colors
 from ..Utils.images import read_image, read_image_array, preprocess_image, resize_image
 from ..Utils.visualization import draw_box, draw_caption,draw_landmarks
 from ..Utils.download import download_file_from_google_drive
@@ -71,7 +72,7 @@ class ThreeDimRestructure:
                 self.__modelLoaded = True
 
 
-    def restructure3DFaceFromImage(self,input_image="",output_path='.',dets=None,
+    def restructure3DFaceFromImage(self,input_image="",output_path=None,dets=None,
                                     depth = False,pose = False):
         """
             'restructure3DFaceFromImage()' function is used to restructure 3D face in the given image path:
@@ -104,10 +105,18 @@ class ThreeDimRestructure:
                 else:
                     raise ValueError("Wrong type of the input image.")
                 detected_copy = image.copy()
+                [h, w, c] = image.shape
 
                 model = self.__model_collection[0]
                 for i,det in enumerate(dets):
-                    img_show,img_3d_inf = model.process3DFile(image,det,output_path=output_path,depth=depth,pose=pose,name=str(i))
+
+                    img_show,img_3d_inf = model.process3DFile(image,det,depth=depth,pose=pose,name=str(i))
+
+                    if output_path !=None:
+                        save_vertices = img_3d_inf['vertices']
+                        save_vertices[:, 1] = h - 1 - save_vertices[:, 1]
+                        write_obj_with_colors(os.path.join(output_path, str(i) + '.obj'), save_vertices, img_3d_inf['triangles'],img_3d_inf['color'])
+                        print("face 3d model is saved at " + os.path.join(output_path, str(i) + '.obj'))
 
                     each_object_details = {}
                     each_object_details["det"] = det

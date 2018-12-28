@@ -65,7 +65,7 @@ class PRN:
         kpt = kpt_3d[:,:2]
         return kpt
 
-    def process3DFile(self,image,recs,output_path='.',depth=False, pose = False,name='default'):
+    def process3DFile(self,image,recs,depth=False, pose = False,name='default'):
         img_show ={}
         img_inf = {}
 
@@ -76,13 +76,9 @@ class PRN:
         img_inf["vertices"] = vertices
         img_inf["landmarks_3d"] = kpt_3d
         img_inf["color"] = save_color
+        img_inf["triangles"] = self.triangles
 
         kpt = self.get_landmarks(pos)[:,:2]
-
-        save_vertices = vertices.copy()
-        save_vertices[:, 1] = h - 1 - save_vertices[:, 1]
-        write_obj_with_colors(os.path.join(output_path, name + '.obj'), save_vertices, self.triangles, save_color)
-        print("face 3d model is saved at " + os.path.join(output_path, name + '.obj'))
 
         if depth:
             depth_image_show ,depth_inf= self.get_depth(vertices,h,w)
