@@ -12,7 +12,6 @@ def main():
     # image_arr = cv2.cvtColor(image_arr, cv2.COLOR_BGR2RGB)
     facedetector = FacesDetection()
     facedetector.setModelTypeAsMTCNN()
-    facedetector.setModelPath(model_path)
     facedetector.loadModel(min_face_size=12)
 
     img,dets = facedetector.detectFacesFromImage(input_image=input_path,box_mark=True)

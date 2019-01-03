@@ -78,6 +78,7 @@ class ThreeDimRestructure:
             'restructure3DFaceFromImage()' function is used to restructure 3D face in the given image path:
                     * input_image , which can be file to path, image numpy array ,the function will recognize the type of the input automatically
                     * dets , the boundaries of the objective faces
+                    * output_path , the output path of the 3d file(.obj),if None ,no output
                     * points_mark , whether the output image are marked with points
 
             The values returned by this function as follows:
