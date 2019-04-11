@@ -1,6 +1,6 @@
 # FaceAI
 
-A python library built to realize face detection with Deep Learning using simple and few lines of code.
+A python library built to realize face detection and face landmark with Deep Learning using simple and few lines of code.And my [website](https://jimmy0087.github.io/) will follow Latest paper and poster some my personal comment.
 
 <img src="http://ww1.sinaimg.cn/thumbnail/0061KkpRly1fxtaimmmxtj308k08qq2w.jpg"/>
 
